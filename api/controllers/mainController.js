@@ -2,24 +2,42 @@
 
 
 var mongoose = require('mongoose'),
-  Hashtag = mongoose.model('Hashtag');
+  Hashtag = mongoose.model('Hashtag'),
+  postMessageModel = mongoose.model('PostMessage');
 
 
-exports.list_all_posts_with_hashtag = function(req,res){
+exports.list_all_posts = function(req,res){
   Hashtag.find({},function(err,hashtag){
     if(err)
       res.send(err);
-    res.json(hashtag);
+    res.send(hashtag);
+  });
+}
+
+exports.list_all_posts_with_hashtag = function(req,res){
+  var searchQuery = '#'+req.params.hashtag;
+  console.log(searchQuery);
+  Hashtag.find({hashtags : searchQuery},function(err,hashtag){
+    if(err)
+      res.send(err);
+      console.log(hashtag);
+    res.send(hashtag);
   });
 };
 
 exports.add_post_with_hashtag = function(req,res){
-  var new_post_msg = new Hashtag(req.body);
-  new_post_msg.save(function(err,hashtag){
-      if(err)
-        res.send(err);
-      res.send(hashtag);
-  });
+  var postMsg = req.body.postMessage;
+  var containsHashtag = checkForHashtags(postMsg);
+  if(containsHashtag){
+      var new_post_msg = new Hashtag({post : postMsg, hashtags : extractHashtags(postMsg)});
+      console.log(new_post_msg);
+      new_post_msg.save(function(err){
+        if(err)
+          res.send(err);
+        res.send(new_post_msg);
+      });
+  }
+  // res.send('');
 };
 
 
@@ -33,6 +51,29 @@ exports.delete_hashtag = function(req,res) {
     res.json({ message: 'Post successfully deleted' });
   });
 };
+
+
+function checkForHashtags(postMsg){
+  var words = postMsg.split(" ");
+  for(var i in words){
+    if(words[i].charAt(0) == '#'){
+      return true;
+    }
+  }
+  return false;
+}
+
+function extractHashtags(postMsg){
+  var hashtags = [];
+  var words = postMsg.split(" ");
+  for(var i in words){
+    if(words[i].charAt(0) == '#'){
+      hashtags.push(words[i]);
+    }
+  }
+  console.log(hashtags);
+  return hashtags;
+}
 
 
 // exports.list_all_tasks = function(req, res) {

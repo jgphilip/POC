@@ -2,7 +2,8 @@ var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000;
   mongoose = require('mongoose'),
-  Hashtag = require('./api/models/hastagModel'),
+  PostMessage = require('./api/models/postMessageModel'),
+  Hashtag = require('./api/models/hashtagModel'),
   bodyParser = require('body-parser');
   
 mongoose.Promise = global.Promise;
