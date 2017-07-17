@@ -2,6 +2,7 @@ var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000;
   mongoose = require('mongoose'),
+  apiai = require('apiai'),
   PostMessage = require('./api/models/postMessageModel'),
   Hashtag = require('./api/models/hashtagModel'),
   bodyParser = require('body-parser');

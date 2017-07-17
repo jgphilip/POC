@@ -1,9 +1,13 @@
 'use strict';
 
 
-var mongoose = require('mongoose'),
+var  apiai = require('apiai'),
+  mongoose = require('mongoose'),
   Hashtag = mongoose.model('Hashtag'),
   postMessageModel = mongoose.model('PostMessage');
+
+var apiai_app = apiai("c7655d7d5e394250b3e74bf55b699735");
+
 
 
 exports.list_all_posts = function(req,res){
@@ -34,10 +38,13 @@ exports.add_post_with_hashtag = function(req,res){
       new_post_msg.save(function(err){
         if(err)
           res.send(err);
-        res.send(new_post_msg);
+        else
+          res.send(new_post_msg);
       });
   }
-  // res.send('');
+  else{
+      res.send('');
+  }
 };
 
 
@@ -52,6 +59,23 @@ exports.delete_hashtag = function(req,res) {
   });
 };
 
+
+exports.request_help_from_apiai = function(req,res){
+    var request = apiai_app.textRequest('Score please', {
+      sessionId: '14243ndfgh23423hdhdhhdfhh'
+  });
+
+  request.on('response', function(response) {
+      console.log(response);
+      res.json('Success' + response);
+  });
+
+  request.on('error', function(error) {
+      console.log(error);
+      res.json('Failure' + response);
+  });
+  request.end();
+}
 
 function checkForHashtags(postMsg){
   var words = postMsg.split(" ");
@@ -74,51 +98,3 @@ function extractHashtags(postMsg){
   console.log(hashtags);
   return hashtags;
 }
-
-
-// exports.list_all_tasks = function(req, res) {
-//   Task.find({}, function(err, task) {
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-// exports.create_a_task = function(req, res) {
-//   var new_task = new Task(req.body);
-//   new_task.save(function(err, task) {
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-// exports.read_a_task = function(req, res) {
-//   Task.findById(req.params.taskId, function(err, task) {
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-// exports.update_a_task = function(req, res) {
-//   Task.findOneAndUpdate(req.params.taskId, req.body, {new: true}, function(err, task) {
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-// exports.delete_a_task = function(req, res) {
-//   Task.remove({
-//     _id: req.params.taskId
-//   }, function(err, task) {
-//     if (err)
-//       res.send(err);
-//     res.json({ message: 'Task successfully deleted' });
-//   });
-// };

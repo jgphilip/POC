@@ -12,6 +12,8 @@ module.exports = function(app) {
   app.route('/post/:postId')
     .delete(mainController.delete_hashtag);
 
+  app.route('/apiai')
+    .get(mainController.request_help_from_apiai);
 
     app.use(function(req, res) {
   res.status(404).send({url: req.originalUrl + ' not found'})
