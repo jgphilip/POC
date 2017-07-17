@@ -67,7 +67,7 @@ exports.request_help_from_apiai = function(req,res){
 
   request.on('response', function(response) {
       console.log(response);
-      res.json('Success' + response);
+      res.json(response);
   });
 
   request.on('error', function(error) {
