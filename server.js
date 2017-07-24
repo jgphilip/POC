@@ -2,15 +2,15 @@ var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000;
   mongoose = require('mongoose'),
-  apiai = require('apiai'),
-  PostMessage = require('./api/models/postMessageModel'),
+  Message = require('./api/models/messageModel'),
   Hashtag = require('./api/models/hashtagModel'),
   bodyParser = require('body-parser');
   
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Tododb'); 
+mongoose.connect('mongodb://localhost/messageDB'); 
 
-
+//Serving static files from the "public" folder
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

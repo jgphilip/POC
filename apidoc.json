@@ -1,0 +1,8 @@
+{
+	"name" : "POC API documentation",
+	"version" :"1.0.0",
+	"description":"List of APIs used in the POC",
+	"template":{
+		"forceLanguage":"en"
+	}
+}

@@ -4,7 +4,8 @@ var Schema = mongoose.Schema;
 
 
 var hashtagSchema = new Schema({
-	post 				: String,
+	messageText 			: String,
+	wsJid 				: String,
 	hashtags 			: [String],
 });
 

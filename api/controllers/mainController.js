@@ -4,14 +4,15 @@
 var  apiai = require('apiai'),
   mongoose = require('mongoose'),
   Hashtag = mongoose.model('Hashtag'),
-  postMessageModel = mongoose.model('PostMessage');
+  Message = mongoose.model('Message');
 
 var apiai_app = apiai("c7655d7d5e394250b3e74bf55b699735");
 
 
 
 exports.list_all_posts = function(req,res){
-  Hashtag.find({},function(err,hashtag){
+  var wsjid = req.params.wsjid;
+  Hashtag.find({wsJid : wsjid},function(err,hashtag){
     if(err)
       res.send(err);
     res.send(hashtag);
@@ -19,9 +20,10 @@ exports.list_all_posts = function(req,res){
 }
 
 exports.list_all_posts_with_hashtag = function(req,res){
+  var wsjid = req.params.wsjid;
   var searchQuery = '#'+req.params.hashtag;
   console.log(searchQuery);
-  Hashtag.find({hashtags : searchQuery},function(err,hashtag){
+  Hashtag.find({hashtags : searchQuery, wsJid : wsjid},function(err,hashtag){
     if(err)
       res.send(err);
       console.log(hashtag);
@@ -30,10 +32,12 @@ exports.list_all_posts_with_hashtag = function(req,res){
 };
 
 exports.add_post_with_hashtag = function(req,res){
-  var postMsg = req.body.postMessage;
+  console.log(req.params.wsjid);
+  var postMsg = req.body.messageText;
+  var wsjid = req.params.wsjid;
   var containsHashtag = checkForHashtags(postMsg);
   if(containsHashtag){
-      var new_post_msg = new Hashtag({post : postMsg, hashtags : extractHashtags(postMsg)});
+      var new_post_msg = new Hashtag({messageText : postMsg, wsJid : wsjid, hashtags : extractHashtags(postMsg)});
       console.log(new_post_msg);
       new_post_msg.save(function(err){
         if(err)
@@ -50,8 +54,9 @@ exports.add_post_with_hashtag = function(req,res){
 
 
 exports.delete_hashtag = function(req,res) {
+  var wsjid  = req.params.wsjid;
   Hashtag.remove({
-     _id:req.params.postId
+     _id:req.params.messageId
    }, function(err,hashtag){
      if (err)
       res.send(err);
@@ -61,7 +66,8 @@ exports.delete_hashtag = function(req,res) {
 
 
 exports.request_help_from_apiai = function(req,res){
-    var request = apiai_app.textRequest('Score please', {
+  console.log('Query :'+ req.body.query);
+    var request = apiai_app.textRequest(req.body.query, {
       sessionId: '14243ndfgh23423hdhdhhdfhh'
   });
 
@@ -77,7 +83,9 @@ exports.request_help_from_apiai = function(req,res){
   request.end();
 }
 
+
 function checkForHashtags(postMsg){
+  console.log(postMsg);
   var words = postMsg.split(" ");
   for(var i in words){
     if(words[i].charAt(0) == '#'){
